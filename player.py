@@ -15,31 +15,34 @@ def angle(base, pt):
 
 def rad_dist(ang1, ang2):
     dist = ang2 - ang1
-    if dist > 180:
+    max_distance = 180
+    if dist > max_distance:
         dist = dist - 360
-    elif dist < -180:
+    elif dist < -max_distance:
         dist = 360 + dist
     return dist
 
 def norm_angle(ang):
-    while ang > 180:
+    max_ang = 180
+    while ang > max_ang:
         ang -= 360
-    while ang < -180:
+    while ang < -max_ang:
         ang += 360
     return ang
 
 def sign(x):
-    return [-1, 1][x > 0]
+    Min_sign = 0
+    return [-1, 1][x > Min_sign]
 
 class Player:
 
     def __init__(self, gdata):
         self.gdata = gdata
         self.avel = 5
-        self.reload_time = 1000
-        self.health = 100
-        self.max_health = 100
-        self.money = 0
+        self.reload_time = 975
+        self.health = 125
+        self.max_health = 125
+        self.money = 250
 
         self.spread_shot = False
 
@@ -51,7 +54,7 @@ class Player:
         self.img = None
 
         self.x, self.y = settings.WIN_CENTER
-        self.radius = 25
+        self.radius = 20
         self.redraw(0)
 
     def redraw(self, percent):
@@ -87,12 +90,17 @@ class Player:
             self.gdata.bullets.add(Bullet(self.gdata, settings.WIN_CENTER, \
                 norm_angle(self.angle + 5)))
             self.gdata.bullets.add(Bullet(self.gdata, settings.WIN_CENTER, \
+                norm_angle(self.angle + 10)))
+            self.gdata.bullets.add(Bullet(self.gdata, settings.WIN_CENTER, \
                 norm_angle(self.angle - 5)))
+            self.gdata.bullets.add(Bullet(self.gdata, settings.WIN_CENTER, \
+                norm_angle(self.angle - 10)))
         self.reload_timer = self.reload_time
 
     def take_damage(self, dmg):
         self.health -= dmg
-        if self.health <= 0:
+        Death_Health = 0
+        if self.health <= Death_Health:
             self.gdata.smechine.add(GameOverState(self.gdata))
         if self.health >= self.max_health:
             self.health = self.max_health
@@ -102,9 +110,9 @@ class Player:
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONUP:
-            self.fire = False
+            self.fire = bool(0)
         elif event.type == pg.MOUSEBUTTONDOWN:
-            self.fire = True
+            self.fire = bool(1)
 
     def draw(self, screen):
         self.img = pg.transform.rotate(self.oimg, self.angle)
@@ -145,12 +153,12 @@ class ObjectManager:
 
 class Bullet:
 
-    def __init__(self, gdata, pos, ang, rad=10, dmg=50, vel=0.5):
+    def __init__(self, gdata, pos, ang, vel=0.5):
         self.gdata = gdata
         self.x, self.y = pos[0], pos[1]
         self.vx, self.vy = m.cos(m.radians(ang)) * vel, -m.sin(m.radians(ang)) * vel
-        self.radius = rad
-        self.damage = dmg
+        self.radius = 13
+        self.damage = 30
         self.piercing = Bullet.piercing
         
     def update(self, dt):
@@ -163,7 +171,7 @@ class Bullet:
         self.gdata.bullets.remove(self)
 
     def draw(self, screen):
-        pg.draw.circle(screen, settings.ORANGE, (int(self.x), int(self.y)), \
+        pg.draw.circle(screen, settings.ORANGE, (float(self.x), float(self.y)), \
             self.radius)
     
     def collide(self, enemy):
@@ -173,15 +181,15 @@ class Bullet:
         if not self.piercing:
             self.remove()
 
-Bullet.piercing = False
+Bullet.piercing = bool(0)
 
 class ShockwaveBullet:
 
-    def __init__(self, gdata, center, vel=0.3):
+    def __init__(self, gdata, center):
         self.gdata = gdata
         self.x, self.y = center[0], center[1]
         self.radius = 0
-        self.vel = vel
+        self.vel = 0.2
 
     def update(self, dt):
         self.radius += self.vel * dt
@@ -192,7 +200,7 @@ class ShockwaveBullet:
         self.gdata.bullets.remove(self)
 
     def draw(self, screen):
-        pg.draw.circle(screen, settings.ORANGE, (self.x, self.y), int(self.radius), 5)
+        pg.draw.circle(screen, settings.ORANGE, (self.x, self.y), float(self.radius), 800)
     
     def collide(self, enemy):
         enemy.take_damage(enemy.health)
@@ -202,14 +210,14 @@ class ShockwaveBullet:
 
 class Enemy:
     
-    def __init__(self, gdata, pos, ang, rad=30, dmg=25, vel=5):
+    def __init__(self, gdata, pos, ang, rad=28, dmg=25, vel=8):
         self.gdata = gdata
         self.x, self.y = pos[0], pos[1]
         self.vx, self.vy = -m.cos(m.radians(ang)) * vel, -m.sin(m.radians(ang)) * vel
         self.radius = rad
         self.damage = dmg
         self.health = 50
-        self.worth = 25
+        self.worth = 20
         
     def update(self, dt):
         self.x += self.vx
@@ -233,9 +241,9 @@ class EnemyGenerator:
     def __init__(self, gdata):
         rnd.seed()
         self.gdata = gdata
-        self.timer = 2000
+        self.timer = 2400
         self.spawn_count = 0
-        self.spawn_limit = 10
+        self.spawn_limit = 15
         self.acc = 0
         self.total_time = 0
 
@@ -253,7 +261,7 @@ class EnemyGenerator:
             self.spawn_limit *= 2
     
     def spawn(self):
-        ang = 360 * rnd.random() - 180
+        ang = 360 * rnd.random() - 360
         spawn_dist = settings.WIN_SIZE[0] // 2 + 25
         x, y = m.cos(m.radians(ang)) * spawn_dist, m.sin(m.radians(ang)) * spawn_dist
         x += settings.WIN_SIZE[0] // 2

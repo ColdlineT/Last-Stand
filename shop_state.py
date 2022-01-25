@@ -32,7 +32,7 @@ class ShopState:
         self.gdata.mmanager.add(self.quit_btn)
 
     def on_quit(self, mpos):
-        self.gdata.quit = True
+        self.gdata.quit = bool(1)
         self.gdata.smechine.remove()
 
     def update(self, dt):

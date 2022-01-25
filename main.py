@@ -23,7 +23,7 @@ gdata.enemies = None #[]
 gdata.enemygen = None #EnemyGenerator(gdata)
 gdata.shop = None #Shop(gdata)
 gdata.time = 0
-gdata.quit = False
+gdata.quit = bool(0)
 gdata.score = ui.Score()
 gdata.smechine = StateMechine(MenuState(gdata))
 

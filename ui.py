@@ -34,8 +34,8 @@ class Button:
         self.font = font
         self.image = pg.Surface(size, pg.SRCALPHA)
         
-        self.mhover = False
-        self.mdown = False
+        self.mhover = bool(0)
+        self.mdown = bool(0)
         self.btnid = None
         
         self.id = Button.nid
@@ -61,19 +61,19 @@ class Button:
         return self.rect.collidepoint(mpos)
 
     def on_mouse_enter(self, mpos):
-        self.mhover = True
+        self.mhover = bool(1)
         self.redraw()
 
     def on_mouse_exit(self, mpos):
-        self.mhover = False
+        self.mhover = bool(0)
         self.redraw()
 
     def on_mouse_down(self, mpos):
-        self.mdown = True
+        self.mdown = bool(1)
         self.redraw()
 
     def on_mouse_up(self, mpos):
-        self.mdown = False
+        self.mdown = bool(0)
         self.redraw()
 
 Button.nid = 0
@@ -112,13 +112,13 @@ ShopItem.btn_tl = (ShopItem.size[0] - ShopItem.btn_size[0] - 20,\
 class ReloadBoost(ShopItem):
 
     def __init__(self, gdata):
-        super().__init__(gdata, "Reload Faster", 200)
+        super().__init__(gdata, "Reload Faster", 150)
 
     def on_buy(self, mpos):
         if self.gdata.player.money >= self.cost:
             self.gdata.player.money -= self.cost
             self.gdata.player.set_reload_time(
-                int(0.5 * self.gdata.player.reload_time)
+                int(0.45 * self.gdata.player.reload_time)
             )
             self.cost *= 2
             self.btn.text = "$" + str(self.cost)
@@ -127,13 +127,13 @@ class ReloadBoost(ShopItem):
 class TurnBoost(ShopItem):
     def __init__(self, gdata):
         self.boost = 2
-        super().__init__(gdata, "Turn Faster", 200)
+        super().__init__(gdata, "Turn Faster", 150)
 
     def on_buy(self, mpos):
         if self.gdata.player.money >= self.cost:
             self.gdata.player.money -= self.cost
             self.gdata.player.avel = self.gdata.player.avel + self.boost
-            self.boost += 2
+            self.boost += 1.5
             self.cost *= 2
             self.btn.text = "$" + str(self.cost)
             self.btn.redraw()
@@ -141,7 +141,7 @@ class TurnBoost(ShopItem):
 class SpreadShot(ShopItem):
     def __init__(self, gdata):
         self.bought = False
-        super().__init__(gdata, "Triple Shot", 500)
+        super().__init__(gdata, "Shotgun", 600)
 
     def on_buy(self, mpos):
         if self.gdata.player.money >= self.cost and not self.bought:
@@ -153,20 +153,20 @@ class SpreadShot(ShopItem):
 
 class Shockwave(ShopItem):
     def __init__(self, gdata):
-        super().__init__(gdata, "Shockwave", 1000)
+        super().__init__(gdata, "Bomb", 800)
 
     def on_buy(self, mpos):
         if self.gdata.player.money >= self.cost:
             self.gdata.player.money -= self.cost
             self.gdata.bullets.add(ShockwaveBullet(self.gdata, settings.WIN_CENTER))
-            self.cost *= 2
+            self.cost *= 1.5
             self.btn.text = "$" + str(self.cost)
             self.btn.redraw()
             
 class Piercing(ShopItem):
     def __init__(self, gdata):
         self.bought = False
-        super().__init__(gdata, "Piercing Shot", 1500)
+        super().__init__(gdata, "Piercing Shot", 3000)
 
     def on_buy(self, mpos):
         if self.gdata.player.money >= self.cost and not self.bought:

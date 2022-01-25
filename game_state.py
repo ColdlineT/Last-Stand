@@ -20,9 +20,9 @@ class GameState:
         gdata.enemies = ObjectManager()
         gdata.enemygen = EnemyGenerator(gdata)
         gdata.time = 0
-        gdata.quit = False
+        gdata.quit = bool(0)
         gdata.shop = None
-        Bullet.piercing = False
+        Bullet.piercing = bool(0)
 
         self.shop_prompt = gdata.fonts["tiny"].render("Press Space to open Shop",\
             True, settings.WHITE)
@@ -86,4 +86,4 @@ class GameState:
     def clean_up(self):
         pass
 
-GameState.show_shop_prompt = True
+GameState.show_shop_prompt = bool(1)

@@ -17,20 +17,19 @@ class GameOverState:
         self.ok_btn = ui.Button((btn_left, btn_top), btn_size, self.on_ok, "Ok",\
             self.gdata.fonts["Large"])
 
-        self.text = self.gdata.fonts["Large"].render("Game Over, You Lasted " +\
-            str(self.gdata.time // 1000) + " Seconds", True, settings.WHITE)
+        self.text = self.gdata.fonts["Large"].render(f"Bruh, Only {self.gdata.time // 1000}  seconds", True, settings.WHITE)
         text_left = (settings.WIN_SIZE[0] - self.text.get_width()) // 2
         text_top = rect.height // 4 - self.text.get_height() // 2 + rect.top
         self.text_tl = text_left, text_top
 
-    def on_ok(self, mpos):
+    def on_ok(self):
         self.gdata.smechine.remove()
 
     def start_up(self):
         self.gdata.score.add(self.gdata.time // 1000)
         self.gdata.mmanager.add(self.ok_btn)
 
-    def update(self, dt):
+    def update(self):
         self.gdata.mmanager.update()
 
     def handle_event(self, event):
